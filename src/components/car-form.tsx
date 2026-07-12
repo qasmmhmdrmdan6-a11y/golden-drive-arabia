@@ -141,10 +141,12 @@ export function CarForm({ initial, carId }: { initial?: Car; carId?: string }) {
 
     // Sync gallery
     if (id) {
-      // Delete removed
-      const existingIds = gallery.filter((g) => g.id).map((g) => g.id!);
-      await supabase.from("car_images").delete().eq("car_id", id).not("id", "in", `(${existingIds.length > 0 ? existingIds.map((x) => `"${x}"`).join(",") : "''"})`);
-      // Insert new
+      const { data: existing } = await supabase.from("car_images").select("id").eq("car_id", id);
+      const keepIds = new Set(gallery.filter((g) => g.id).map((g) => g.id!));
+      const removeIds = (existing ?? []).map((r) => r.id).filter((rid) => !keepIds.has(rid));
+      if (removeIds.length > 0) {
+        await supabase.from("car_images").delete().in("id", removeIds);
+      }
       const toInsert = gallery
         .filter((g) => !g.id)
         .map((g, i) => ({ car_id: id!, url: g.path, sort_order: i }));
