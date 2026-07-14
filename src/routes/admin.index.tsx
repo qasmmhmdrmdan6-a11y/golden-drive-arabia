@@ -124,40 +124,85 @@ function AdminDashboard() {
   return (
     <div className="min-h-screen bg-onyx text-white font-body" dir="rtl">
       <header className="border-b border-gold/10 bg-charcoal/40">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/admin" className="text-xl font-display font-bold text-gold">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+          <Link to="/admin" className="text-lg sm:text-xl font-display font-bold text-gold truncate">
             لوحة التحكم
           </Link>
-          <div className="flex items-center gap-4">
-            <Link to="/" className="text-white/60 text-sm hover:text-gold">
+          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+            <Link to="/" className="text-white/60 text-xs sm:text-sm hover:text-gold">
               عرض الموقع
             </Link>
             <button
               onClick={handleSignOut}
-              className="text-white/60 text-sm hover:text-gold inline-flex items-center gap-2"
+              className="text-white/60 text-xs sm:text-sm hover:text-gold inline-flex items-center gap-2"
             >
-              <LogOut className="w-4 h-4" /> خروج
+              <LogOut className="w-4 h-4" /> <span className="hidden sm:inline">خروج</span>
             </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-12 space-y-16">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-12 sm:space-y-16">
         {/* Cars */}
         <section>
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h2 className="text-2xl font-display font-bold">السيارات ({cars.length})</h2>
-              <p className="text-white/50 text-sm mt-1">إدارة أسطول السيارات</p>
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 mb-6">
+            <div className="min-w-0">
+              <h2 className="text-xl sm:text-2xl font-display font-bold">السيارات ({filteredCars.length}/{cars.length})</h2>
+              <p className="text-white/50 text-xs sm:text-sm mt-1">إدارة أسطول السيارات</p>
             </div>
             <Link
               to="/admin/cars/new"
-              className="btn-gold px-5 py-2.5 rounded font-bold text-sm inline-flex items-center gap-2"
+              className="btn-gold px-3 sm:px-5 py-2.5 rounded font-bold text-sm inline-flex items-center gap-2 shrink-0"
             >
-              <Plus className="w-4 h-4" /> إضافة سيارة
+              <Plus className="w-4 h-4" /> <span className="hidden sm:inline">إضافة سيارة</span>
+              <span className="sm:hidden">إضافة</span>
             </Link>
           </div>
-          <div className="bg-charcoal/60 border border-gold/10 rounded overflow-x-auto">
+
+          {/* Filters */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            <div className="relative">
+              <Search className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-white/40" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="بحث: ماركة، موديل، لون..."
+                className="w-full bg-charcoal/60 border border-white/10 focus:border-gold outline-none rounded pr-10 pl-3 py-2.5 text-sm"
+              />
+            </div>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="w-full bg-charcoal/60 border border-white/10 focus:border-gold outline-none rounded px-3 py-2.5 text-sm"
+            >
+              <option value="all">كل الحالات</option>
+              <option value="available">متاحة</option>
+              <option value="reserved">محجوزة</option>
+              <option value="sold">مباعة</option>
+            </select>
+            <select
+              value={brandFilter}
+              onChange={(e) => setBrandFilter(e.target.value)}
+              className="w-full bg-charcoal/60 border border-white/10 focus:border-gold outline-none rounded px-3 py-2.5 text-sm"
+            >
+              <option value="all">كل الماركات</option>
+              {brands.map((b) => (
+                <option key={b} value={b}>{b}</option>
+              ))}
+            </select>
+            <label className="flex items-center gap-2 bg-charcoal/60 border border-white/10 rounded px-3 py-2.5 text-sm cursor-pointer hover:border-gold/40">
+              <input
+                type="checkbox"
+                checked={featuredOnly}
+                onChange={(e) => setFeaturedOnly(e.target.checked)}
+                className="accent-[color:var(--color-gold)]"
+              />
+              <span>المميزة فقط</span>
+            </label>
+          </div>
+
+          {/* Desktop table */}
+          <div className="hidden md:block bg-charcoal/60 border border-gold/10 rounded overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-onyx/60 text-xs uppercase tracking-widest text-white/50">
                 <tr>
@@ -165,19 +210,29 @@ function AdminDashboard() {
                   <th className="text-right px-4 py-3">السنة</th>
                   <th className="text-right px-4 py-3">السعر</th>
                   <th className="text-right px-4 py-3">الحالة</th>
+                  <th className="text-right px-4 py-3">مميّزة</th>
                   <th className="text-right px-4 py-3">إجراءات</th>
                 </tr>
               </thead>
               <tbody>
-                {cars.map((c) => (
+                {filteredCars.map((c) => (
                   <tr key={c.id} className="border-t border-white/5">
                     <td className="px-4 py-3 font-medium">{c.brand} {c.model}</td>
                     <td className="px-4 py-3 text-white/70">{c.year}</td>
-                    <td className="px-4 py-3 text-gold">{formatPrice(c.price)}</td>
+                    <td className="px-4 py-3 text-gold whitespace-nowrap">{formatPrice(c.price)}</td>
                     <td className="px-4 py-3">
-                      <span className="text-xs px-2 py-1 rounded border border-white/10">
-                        {c.status === "available" ? "متاحة" : "مباعة"}
+                      <span className={`text-xs px-2 py-1 rounded border ${STATUS_CLASS[c.status] ?? "border-white/10"}`}>
+                        {STATUS_LABEL[c.status] ?? c.status}
                       </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => toggleFeatured(c.id, c.featured)}
+                        aria-label="تبديل المميزة"
+                        className="p-1.5 rounded hover:bg-white/5"
+                      >
+                        <Star className={`w-4 h-4 ${c.featured ? "fill-gold text-gold" : "text-white/30"}`} />
+                      </button>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex gap-2">
@@ -186,6 +241,83 @@ function AdminDashboard() {
                           params={{ id: c.id }}
                           className="p-2 border border-white/10 hover:border-gold hover:text-gold rounded"
                           aria-label="تعديل"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(c.id)}
+                          className="p-2 border border-white/10 hover:border-destructive hover:text-destructive rounded"
+                          aria-label="حذف"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {filteredCars.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="text-center py-8 text-white/40">
+                      لا توجد نتائج.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile cards */}
+          <div className="md:hidden grid gap-3">
+            {filteredCars.map((c) => (
+              <div key={c.id} className="bg-charcoal/60 border border-gold/10 rounded p-4">
+                <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3 items-start">
+                  <div className="min-w-0">
+                    <p className="font-bold truncate">{c.brand} {c.model}</p>
+                    <p className="text-xs text-white/50 mt-0.5">{c.year} • {c.color || "—"}</p>
+                    <p className="text-gold text-sm mt-2 font-bold">{formatPrice(c.price)}</p>
+                    <div className="flex items-center gap-2 mt-2 flex-wrap">
+                      <span className={`text-[10px] px-2 py-0.5 rounded border ${STATUS_CLASS[c.status] ?? "border-white/10"}`}>
+                        {STATUS_LABEL[c.status] ?? c.status}
+                      </span>
+                      {c.featured && (
+                        <span className="text-[10px] px-2 py-0.5 rounded border border-gold/40 text-gold inline-flex items-center gap-1">
+                          <Star className="w-3 h-3 fill-gold" /> مميزة
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2 shrink-0">
+                    <button
+                      onClick={() => toggleFeatured(c.id, c.featured)}
+                      className="p-2 border border-white/10 rounded"
+                      aria-label="تبديل المميزة"
+                    >
+                      <Star className={`w-4 h-4 ${c.featured ? "fill-gold text-gold" : "text-white/40"}`} />
+                    </button>
+                    <Link
+                      to="/admin/cars/$id/edit"
+                      params={{ id: c.id }}
+                      className="p-2 border border-white/10 hover:border-gold hover:text-gold rounded"
+                      aria-label="تعديل"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(c.id)}
+                      className="p-2 border border-white/10 hover:border-destructive hover:text-destructive rounded"
+                      aria-label="حذف"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {filteredCars.length === 0 && (
+              <p className="text-center py-8 text-white/40 text-sm">لا توجد نتائج.</p>
+            )}
+          </div>
+        </section>
                         >
                           <Pencil className="w-4 h-4" />
                         </Link>
