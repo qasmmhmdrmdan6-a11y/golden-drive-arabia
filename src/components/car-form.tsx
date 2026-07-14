@@ -147,17 +147,23 @@ export function CarForm({ initial, carId }: { initial?: Car; carId?: string }) {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const parsed = carSchema.safeParse(values);
+    if (!parsed.success) {
+      const first = parsed.error.errors[0];
+      toast.error(first?.message ?? "تحقق من الحقول");
+      return;
+    }
     setSaving(true);
     let id = carId;
     if (id) {
-      const { error } = await supabase.from("cars").update(values).eq("id", id);
+      const { error } = await supabase.from("cars").update(parsed.data).eq("id", id);
       if (error) {
         setSaving(false);
         toast.error(error.message);
         return;
       }
     } else {
-      const { data, error } = await supabase.from("cars").insert(values).select().single();
+      const { data, error } = await supabase.from("cars").insert(parsed.data).select().single();
       if (error || !data) {
         setSaving(false);
         toast.error(error?.message ?? "خطأ");
