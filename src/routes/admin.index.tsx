@@ -61,6 +61,42 @@ function AdminDashboard() {
     enabled: admin.isAdmin,
   });
 
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [brandFilter, setBrandFilter] = useState<string>("all");
+  const [featuredOnly, setFeaturedOnly] = useState(false);
+
+  const brands = useMemo(
+    () => Array.from(new Set(cars.map((c) => c.brand))).sort(),
+    [cars],
+  );
+
+  const filteredCars = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return cars.filter((c) => {
+      if (statusFilter !== "all" && c.status !== statusFilter) return false;
+      if (brandFilter !== "all" && c.brand !== brandFilter) return false;
+      if (featuredOnly && !c.featured) return false;
+      if (q) {
+        const hay = `${c.brand} ${c.model} ${c.year} ${c.color}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [cars, search, statusFilter, brandFilter, featuredOnly]);
+
+  async function toggleFeatured(id: string, current: boolean) {
+    const { error } = await supabase.from("cars").update({ featured: !current }).eq("id", id);
+    if (error) {
+      toast.error("تعذر التحديث");
+      return;
+    }
+    toast.success(!current ? "تمت الإضافة إلى المميزة" : "أُزيلت من المميزة");
+    qc.invalidateQueries({ queryKey: ["admin-cars"] });
+    qc.invalidateQueries({ queryKey: ["cars"] });
+    qc.invalidateQueries({ queryKey: ["featured-cars"] });
+  }
+
   async function handleDelete(id: string) {
     if (!confirm("هل أنت متأكد من حذف هذه السيارة؟")) return;
     const { error } = await supabase.from("cars").delete().eq("id", id);
