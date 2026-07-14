@@ -318,31 +318,6 @@ function AdminDashboard() {
             )}
           </div>
         </section>
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(c.id)}
-                          className="p-2 border border-white/10 hover:border-destructive hover:text-destructive rounded"
-                          aria-label="حذف"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {cars.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className="text-center py-8 text-white/40">
-                      لا توجد سيارات بعد.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </section>
 
         {/* Bookings */}
         <section>
