@@ -1,10 +1,22 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Pencil, Trash2, LogOut, Mail, Calendar } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Plus, Pencil, Trash2, LogOut, Mail, Calendar, Search, Star } from "lucide-react";
 import { toast } from "sonner";
 import { useRequireAdmin } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchCars, formatPrice } from "@/lib/cars";
+
+const STATUS_LABEL: Record<string, string> = {
+  available: "متاحة",
+  reserved: "محجوزة",
+  sold: "مباعة",
+};
+const STATUS_CLASS: Record<string, string> = {
+  available: "border-emerald-500/40 text-emerald-300",
+  reserved: "border-amber-500/40 text-amber-300",
+  sold: "border-rose-500/40 text-rose-300",
+};
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
