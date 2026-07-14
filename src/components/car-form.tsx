@@ -3,9 +3,36 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { X, Upload } from "lucide-react";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { resolveImage } from "@/lib/image";
 import type { Car } from "@/lib/cars";
+
+const currentYear = new Date().getFullYear();
+const carSchema = z.object({
+  brand: z.string().trim().min(1, "الماركة مطلوبة").max(60, "الماركة طويلة جداً"),
+  model: z.string().trim().min(1, "الموديل مطلوب").max(80, "الموديل طويل جداً"),
+  year: z
+    .number({ invalid_type_error: "أدخل سنة صحيحة" })
+    .int("سنة غير صحيحة")
+    .min(1950, "السنة يجب أن تكون بعد 1950")
+    .max(currentYear + 1, `السنة يجب ألا تتجاوز ${currentYear + 1}`),
+  price: z
+    .number({ invalid_type_error: "أدخل سعراً صحيحاً" })
+    .positive("السعر يجب أن يكون أكبر من صفر")
+    .max(100_000_000, "السعر غير معقول"),
+  mileage: z
+    .number({ invalid_type_error: "أدخل مسافة صحيحة" })
+    .min(0, "المسافة لا يمكن أن تكون سالبة")
+    .max(2_000_000, "المسافة غير معقولة"),
+  fuel: z.string().min(1),
+  transmission: z.string().min(1),
+  color: z.string().trim().max(40, "اللون طويل جداً"),
+  description: z.string().trim().max(2000, "الوصف طويل جداً"),
+  status: z.enum(["available", "sold", "reserved"]),
+  featured: z.boolean(),
+  cover_image: z.string().nullable(),
+});
 
 export type CarFormValues = {
   brand: string;
