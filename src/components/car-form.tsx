@@ -265,6 +265,7 @@ export function CarForm({ initial, carId }: { initial?: Car; carId?: string }) {
         <FormField label="الحالة">
           <select value={values.status} onChange={(e) => up("status", e.target.value)} className="input">
             <option value="available">متاحة</option>
+            <option value="reserved">محجوزة</option>
             <option value="sold">مباعة</option>
           </select>
         </FormField>
