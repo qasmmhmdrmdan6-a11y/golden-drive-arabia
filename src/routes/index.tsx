@@ -11,7 +11,7 @@ import steering from "@/assets/steering.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "القمة موتورز — أرقى السيارات الفاخرة في المملكة" },
+      { title: "مش هتقدر تفمض عينك — أرقى السيارات الفاخرة في المملكة" },
       {
         name: "description",
         content:
