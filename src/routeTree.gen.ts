@@ -9,36 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TestDriveRouteImport } from './routes/test-drive'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as CarsRouteImport } from './routes/cars'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as CarsRouteImport } from './routes/cars'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TestDriveRouteImport } from './routes/test-drive'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as CarsIdRouteImport } from './routes/cars.$id'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as CarsIdRouteImport } from './routes/cars.$id'
 import { Route as AdminCarsNewRouteImport } from './routes/admin.cars.new'
 import { Route as AdminCarsIdEditRouteImport } from './routes/admin.cars.$id.edit'
 
-const TestDriveRoute = TestDriveRouteImport.update({
-  id: '/test-drive',
-  path: '/test-drive',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CarsRoute = CarsRouteImport.update({
-  id: '/cars',
-  path: '/cars',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -46,9 +31,24 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const CarsRoute = CarsRouteImport.update({
+  id: '/cars',
+  path: '/cars',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestDriveRoute = TestDriveRouteImport.update({
+  id: '/test-drive',
+  path: '/test-drive',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -56,15 +56,15 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
-const CarsIdRoute = CarsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => CarsRoute,
-} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => AdminRoute,
+} as any)
+const CarsIdRoute = CarsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => CarsRoute,
 } as any)
 const AdminCarsNewRoute = AdminCarsNewRouteImport.update({
   id: '/cars/new',
@@ -168,32 +168,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/test-drive': {
-      id: '/test-drive'
-      path: '/test-drive'
-      fullPath: '/test-drive'
-      preLoaderRoute: typeof TestDriveRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cars': {
-      id: '/cars'
-      path: '/cars'
-      fullPath: '/cars'
-      preLoaderRoute: typeof CarsRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -203,11 +182,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/cars': {
+      id: '/cars'
+      path: '/cars'
+      fullPath: '/cars'
+      preLoaderRoute: typeof CarsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test-drive': {
+      id: '/test-drive'
+      path: '/test-drive'
+      fullPath: '/test-drive'
+      preLoaderRoute: typeof TestDriveRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -217,19 +217,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/cars/$id': {
-      id: '/cars/$id'
-      path: '/$id'
-      fullPath: '/cars/$id'
-      preLoaderRoute: typeof CarsIdRouteImport
-      parentRoute: typeof CarsRoute
-    }
     '/admin/login': {
       id: '/admin/login'
       path: '/login'
       fullPath: '/admin/login'
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/cars/$id': {
+      id: '/cars/$id'
+      path: '/$id'
+      fullPath: '/cars/$id'
+      preLoaderRoute: typeof CarsIdRouteImport
+      parentRoute: typeof CarsRoute
     }
     '/admin/cars/new': {
       id: '/admin/cars/new'
